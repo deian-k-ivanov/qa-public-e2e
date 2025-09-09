@@ -1,0 +1,20 @@
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+
+# Ruff = linter + formatter
+[tool.ruff.lint]
+select = ["E", "F", "I"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+[tool.pytest.ini_options]
+addopts = "-ra -q"
+testpaths = ["e2e/tests"]
+xfail_strict = true
+markers = [
+  "smoke: fast, high-value checks for PRs and manual runs",
+  "regression: broader functional coverage"
+]
