@@ -1,6 +1,8 @@
 from constants import BASE_URL
 from enums import SortProductMenuOptions
 from playwright.sync_api import Locator, Page
+from pom.components.page_header import PageHeader
+from pom.components.product_item import ProductItem
 
 
 class InventoryPage:
@@ -8,11 +10,8 @@ class InventoryPage:
 
     def __init__(self, *, page: Page):
         self.page = page
-        self.primary_header = page.get_by_test_id("primary-header")
-        self.open_menu_button = self.primary_header.get_by_test_id("open-menu")
-        self.shopping_cart_button = self.primary_header.get_by_test_id("shopping-cart-link")
-        self.secondary_header = page.get_by_test_id("secondary-header")
-        self.active_sort_option = self.secondary_header.get_by_test_id("active-option")
+        self.page_header = PageHeader(page=page)
+        self.active_sort_option = self.page_header.secondary_header.get_by_test_id("active-option")
         self.sort_products_menu = SortProductsMenu(page=page)
         self.inventory_list = page.get_by_test_id("inventory-list")
         self.inventory_items = self.inventory_list.get_by_test_id("inventory-item")
@@ -34,11 +33,8 @@ class SortProductsMenu:
         self.products_sort_menu.select_option(value=option.value)
 
 
-class InventoryItem:
+class InventoryItem(ProductItem):
     def __init__(self, *, item: Locator):
-        self.item = item
-        self.item_description = self.item.get_by_test_id("inventory-item-description")
-        self.item_name = self.item_description.get_by_test_id("inventory-item-name")
-        self.item_price = self.item.get_by_test_id("inventory-item-price")
+        super().__init__(item=item)
         self.add_to_cart_button = item.locator("button[data-test^='add-to-cart-']")
         self.remove_from_cart_button = item.locator("button[data-test^='remove-']")
