@@ -1,5 +1,7 @@
 from constants import BASE_URL
 from playwright.sync_api import Locator, Page
+from pom.components.page_header import PageHeader
+from pom.components.product_item import ProductItem
 
 
 class ShoppingCartPage:
@@ -7,19 +9,10 @@ class ShoppingCartPage:
 
     def __init__(self, *, page: Page):
         self.page = page
-
-        # Headers / Title
-        self.primary_header = page.get_by_test_id("primary-header")
-        self.shopping_cart_button = self.primary_header.get_by_test_id("shopping-cart-link")
-        self.shopping_cart_badge = self.shopping_cart_button.get_by_test_id("shopping-cart-badge")
-        self.page_title = page.get_by_test_id("title")
-
-        # Cart content
+        self.page_header = PageHeader(page=page)
         self.cart_list = page.get_by_test_id("cart-list")
         self.cart_items = self.cart_list.get_by_test_id("inventory-item")
         self.cart_item_names = self.cart_items.get_by_test_id("inventory-item-name")
-
-        # Actions
         self.continue_shopping_button = page.get_by_test_id("continue-shopping")
         self.checkout_button = page.get_by_test_id("checkout")
 
@@ -34,11 +27,8 @@ class ShoppingCartPage:
         return CartItem(item=item_locator)
 
 
-class CartItem:
+class CartItem(ProductItem):
     def __init__(self, *, item: Locator):
-        self.item = item
-        self.item_description = self.item.get_by_test_id("inventory-item-description")
-        self.item_name = self.item_description.get_by_test_id("inventory-item-name")
-        self.item_price = self.item.get_by_test_id("inventory-item-price")
+        super().__init__(item=item)
         self.quantity = self.item.get_by_test_id("cart-quantity")
         self.remove_button = self.item.locator("button[data-test^='remove-']")
